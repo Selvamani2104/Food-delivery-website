@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ZudoEats - Secure Payment</title>
+    <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+    <link rel="icon" href="./assets/logo/ZLogo.png">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+    <style>
+        body {
+            height: 100vh;
+            margin: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background: url('https://source.unsplash.com/1600x900/?food') no-repeat center center/cover;
+            font-family: 'Poppins', sans-serif;
+        }
+
+        .navbar {
+            position: fixed;
+            top: 10px;
+            left: 40%;
+            transform: translateX(-50%);
+            width: 60%;
+            display: flex;
+            justify-content: left;
+            align-items: left;
+            padding: 10px 20px;
+            
+        }
+        .navbar .logo {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            color: white;
+        }
+        .payment-container {
+            position: relative;
+            background: rgba(255, 255, 255, 0.1);
+            /* filter: blur(2px); */
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+            width: 400px;
+            color: black;
+            text-align: center;
+            transition: transform 0.3s ease-in-out;
+        }
+        .payment-container:hover {
+            transform: scale(1.05);
+        }
+        h1{
+
+            color: #003366;
+            text-decoration: underline;
+            font-style: italic;
+        }
+        h2 {
+            color: #ff4c4c;
+            font-weight: 600;
+        }
+
+        .btn-pay {
+            background: linear-gradient(90deg, #ff8c00, #ff2e63);
+            color: white;
+            font-size: 18px;
+            padding: 12px 24px;
+            border-radius: 8px;
+            cursor: pointer;
+            border: none;
+            transition: all 0.3s ease-in-out;
+            font-weight: 600;
+        }
+
+        .btn-pay:hover {
+            background: linear-gradient(90deg, #ff2e63, #ff8c00);
+            transform: scale(1.1);
+        }
+
+        table {
+            margin: 0 auto;
+            width: 80%;
+            color: black;
+            font-size: 16px;
+            font-weight: 400;
+        }
+    </style>
+</head>
+<body>
+    <nav class="navbar">
+        <div class="logo">
+            <img src="./assets/logo/ZLogo.png" alt="ZudoEats Logo" width="40">
+            <h1><b>ZudoEats</b></h1>
+        </div>
+    </nav>
+    <div class="payment-container">
+        <h2>Proceed to Payment</h2>
+        <p>Your payment is 100% secure with Razorpay.</p>
+        <table>
+            <tr><td>Total Amount:</td><td>₹<span id="OrderAmount">100</span></td></tr>
+            <tr><td>Delivery Charge:</td><td>₹50</td></tr>
+        </table>
+        <hr>
+        <table>
+            <tr><td>Total Payable:</td><td>₹<span id="TotalDisplay"></span></td></tr>
+        </table>
+        <br>
+        <button class="btn-pay" id="rzp-button">Pay Now</button>
+    </div>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            let checkoutButton = document.getElementById('rzp-button');
+            let TotalDisplay = document.getElementById('TotalDisplay');
+            let OrderAmount = document.getElementById('OrderAmount');
+            let totalAmount = sessionStorage.getItem('totalAmount') || 100;
+            let totalAmountToPay = parseFloat(totalAmount) + 50;
+            OrderAmount.innerHTML = totalAmount;
+            TotalDisplay.innerHTML = totalAmountToPay;
+            
+            checkoutButton.onclick = async function (e) {
+                e.preventDefault();
+                
+                try {
+                    let orderResponse = await fetch('http://localhost:8080/api/payment/create-order', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ amount: totalAmountToPay })
+                    });
+                    
+                    let orderData = await orderResponse.json();
+                    if (!orderData.orderId) {
+                        alert("Payment error. Try again.");
+                        return;
+                    }
+                    
+                    var options = {
+                        "key": "rzp_test_flb0L3L7lk2gsM",
+                        "amount": totalAmountToPay * 100,
+                        "currency": "INR",
+                        "name": "Foodieee",
+                        "description": "Order Payment",
+                        "order_id": orderData.orderId,
+                        "handler": function (response) {
+                            window.location.href = "orderSuccess.html";
+                        },
+                        "theme": { "color": "#ff2e63" }
+                    };
+                    
+                    var rzp1 = new Razorpay(options);
+                    rzp1.open();
+                } catch (error) {
+                    console.error("Payment Error:", error);
+                    alert("Payment failed. Try again later.");
+                }
+            };
+        });
+    </script>
+</body>
+</html>

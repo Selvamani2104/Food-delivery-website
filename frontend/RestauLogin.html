@@ -1,0 +1,289 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Restaurant Login & Registration</title>
+    <link rel="icon" href="./assets/logo/ZLogo.png">
+    <style>
+        @import url("https://fonts.googleapis.com/css?family=Poppins:400,500,600,700&display=swap");
+        body {
+            font-family: Arial, sans-serif;
+            background: url("./assets/images/ResLoginimage_enhanced.jpg") no-repeat center center/cover;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+        }
+        
+        .navbar {
+            position: fixed;
+            top: 10px;
+            left: 40%;
+            background: rgb(12,9,47);
+            background: linear-gradient(90deg, rgba(12,9,47,1) 0%, rgba(21,21,144,1) 35%, rgba(22,199,237,1) 100%);
+            transform: translateX(-50%);
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+            width: 60%;
+            display: flex;
+            justify-content: left;
+            align-items: left;
+            padding: 10px 20px;
+            
+        }
+        .navbar .logo {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            color: white;
+        }
+        .container {
+            background: rgba(255, 255, 255, 0.2);
+            -webkit-backdrop-filter: blur(5px);
+            backdrop-filter: blur(5px);
+            padding: 20px 25px 20px 10px;
+            border-radius: 10px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+            text-align: center;
+            width: 320px;
+        }
+        h2 {
+            margin-bottom: 20px;
+            color: black;
+        }
+        label {
+            display: block;
+            text-align: left;
+            margin: 10px 0 5px;
+            color: black;
+        }
+        input {
+            width: 100%;
+            padding: 8px;
+            background-color: transparent !important;
+            margin-bottom: 10px;
+            border: none;
+            color: white;
+            border-bottom: 2px solid #000710;
+            outline: none;
+            font-size: 15px !important;
+            font-weight: bolder;
+            border-radius: 5px;
+        }
+        input::placeholder {
+            color: black !important;
+            font-weight: bold;
+            font-size: 15px;
+            
+        }
+        button {
+            width: 100%;
+            padding: 10px;
+            background-color: rgb(0,50,35);
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            margin-top: 20px;
+        }
+        button:hover {
+            background-color: rgb(165,216,157);
+            color: black;
+        }
+        .toggle {
+            margin-top: 15px;
+            cursor: pointer;
+            color: rgb(165,216,157);
+        }
+        .error-message {
+            color: #ff0000;
+            font-size: 12px;
+            text-align: left;
+            margin-top: -8px;
+            margin-bottom: 8px;
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    
+    <nav class="navbar">
+        <div class="logo">
+            <img src="./assets/logo/ZLogo.png" alt="ZudoEats Logo" width="40">
+           <a href="index.html"> <h1><b>ZudoEats</b></h1></a>
+        </div>
+    </nav>
+        
+    </nav>
+    <div class="container">
+        <h2 id="form-title">Restaurant Login</h2>
+        <form id="authForm">
+            <div id="restaurant-field" style="display: none;">
+                <label for="restaurant">Restaurant Name</label>
+                <input type="text" id="restaurant" placeholder="Enter Restaurant Name" >
+                <div id="restaurant-error" class="error-message">Restaurant name is required</div>
+            </div>
+
+            <label for="email">Email</label>
+            <input type="email" id="email" placeholder="Enter Email" >
+            <div id="email-error" class="error-message">Please enter a valid email address</div>
+            
+            <div id="mobile-field" style="display: none;">
+                <label for="mobile">Mobile Number</label>
+                <input type="tel" id="mobile" placeholder="Enter Mobile Number" pattern="[0-9]{10}" maxlength="10" >
+                <div id="mobile-error" class="error-message">Please enter a valid 10-digit mobile number</div>
+            </div>
+            <div id="image-field" style="display: none;">
+                <label for="RestaurantImage">Restaurant Image</label>
+                <input type="file"  id="RestaurantImage" name="RestaurantImage" accept="image/*">
+            </div>
+            
+            <label for="password">Password</label>
+            <input type="password" id="password" placeholder="Enter Password" >
+            <div id="password-error" class="error-message">Password must be at least 6 characters</div>
+            
+            <div id="confirm-password-field" style="display: none;">
+                <label for="confirm-password">Confirm Password</label>
+                <input type="password" id="confirm-password" placeholder="Confirm Password" >
+                <div id="confirm-password-error" class="error-message">Passwords do not match</div>
+            </div>
+            
+            <button type="submit">Login</button>
+        </form>
+        <p class="toggle" onclick="toggleForm()">Don't have an account? <u>Register here</u></p>
+    </div>
+    
+    <script>
+        let isLogin = true;
+
+        function validateEmail(email) {
+            const re = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            return re.test(email);
+        }
+
+        function validateMobile(mobile) {
+            return /^[0-9]{10}$/.test(mobile);
+        }
+
+        function validatePassword(password) {
+            return password.length >= 6;
+        }
+
+        function validateRestaurantName(name) {
+            return name.trim().length >= 3;
+        }
+
+        function showError(elementId, show) {
+            document.getElementById(elementId).style.display = show ? 'block' : 'none';
+        }
+
+        function toggleForm() {
+            isLogin = !isLogin;
+            document.getElementById('form-title').textContent = isLogin ? 'Restaurant Login' : 'Restaurant Registration';
+            document.querySelector('button').textContent = isLogin ? 'Login' : 'Register';
+            document.querySelector('.toggle').innerHTML = isLogin ? 
+                "Don't have an account? <u>Register here</u>" : 
+                "Already have an account? <u>Login here</u>";
+
+            // Toggle fields visibility
+            document.getElementById('restaurant-field').style.display = isLogin ? 'none' : 'block';
+            document.getElementById('mobile-field').style.display = isLogin ? 'none' : 'block';
+            document.getElementById('confirm-password-field').style.display = isLogin ? 'none' : 'block';
+            document.getElementById('image-field').style.display = isLogin ? 'none' : 'block';
+
+            // Remove 'required' when hidden
+            document.getElementById('restaurant').required = !isLogin;
+            document.getElementById('mobile').required = !isLogin;
+            document.getElementById('confirm-password').required = !isLogin;
+
+            // Reset form and errors
+            document.getElementById('authForm').reset();
+            document.querySelectorAll('.error-message').forEach(error => error.style.display = 'none');
+        }
+
+
+
+        // Real-time validation
+        document.getElementById('restaurant').addEventListener('input', function() {
+            showError('restaurant-error', !validateRestaurantName(this.value) && this.value !== '');
+        });
+
+        document.getElementById('email').addEventListener('input', function() {
+            showError('email-error', !validateEmail(this.value) && this.value !== '');
+        });
+
+        document.getElementById('mobile').addEventListener('input', function() {
+            showError('mobile-error', !validateMobile(this.value) && this.value !== '');
+            this.value = this.value.replace(/\D/g, '').slice(0, 10);
+        });
+
+        document.getElementById('password').addEventListener('input', function() {
+            showError('password-error', !validatePassword(this.value) && this.value !== '');
+        });
+
+        document.getElementById('confirm-password').addEventListener('input', function() {
+            const password = document.getElementById('password').value;
+            showError('confirm-password-error', this.value !== password && this.value !== '');
+        });
+    </script>
+    <script>
+        document.getElementById('authForm').addEventListener('submit', async function (event) {
+    event.preventDefault();
+
+    const isLogin = document.getElementById('form-title').textContent.includes('Login');
+
+    if (isLogin) {
+        // Login Request (JSON Payload)
+        const loginData = {
+            email: document.getElementById('email').value,
+            password: document.getElementById('password').value
+        };
+
+        const response = await fetch('http://localhost:8080/api/users/login', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(loginData)
+        });
+
+        const result = await response.json();
+        if (response.ok) {
+            alert('Login successful');
+            sessionStorage.setItem('adminId', JSON.stringify(result.user.id));
+            window.location.href = 'addProducts.html';
+        } else {
+            alert(result.message);
+        }
+    } else {
+        // Registration Request (Multipart Form Data)
+        let formData = new FormData();
+        formData.append('restaurantName', document.getElementById('restaurant').value);
+        formData.append('email', document.getElementById('email').value);
+        formData.append('mobile', document.getElementById('mobile').value);
+        formData.append('password', document.getElementById('password').value);
+        const imageFile = document.getElementById("RestaurantImage").files[0];
+        if (imageFile) {
+            formData.append('imageFile', imageFile);
+        }
+
+        const response = await fetch('http://localhost:8080/api/users/register', {
+            method: 'POST',
+            body: formData // Do NOT set Content-Type header manually!
+        });
+
+        const result = await response.json();
+        if (response.ok) {
+            alert('Registration successful');            
+            sessionStorage.setItem('adminId', JSON.stringify(result.id));
+            window.location.href = 'addProducts.html';
+        } else {
+            alert(result.message);
+        }
+    }
+});
+
+
+    </script>
+</body>
+</html>
